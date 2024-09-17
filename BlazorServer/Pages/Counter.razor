@@ -1,0 +1,26 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+<span>
+    <button class="btn btn-primary" @onclick="Add">Add</button>
+    <button class="btn btn-primary" @onclick="Minus">Minus</button>
+</span>
+
+
+@code {
+    private int currentCount = 0;
+
+    private void Add()
+    {
+        this.currentCount++;
+    }
+
+    private void Minus()
+    {
+        this.currentCount--;
+    }
+}

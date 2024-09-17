@@ -1,0 +1,94 @@
+﻿@page "/demo"
+
+<PageTitle>List</PageTitle>
+
+@using BlazorServer.Models
+@using BlazorServer.Models.DBModel;
+@using BlazorServer.Services
+
+@*注入服務*@
+@inject OrderService _orderService
+
+<h1>Order List</h1>
+
+<p>This is shit code！</p>
+<span>
+
+    <button class="btn btn-primary" @onclick="Add">Add</button>
+</span>
+
+@if (orders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>訂單編號</th>
+                <th>成立時間</th>
+                <th>金額</th>
+                <th>訂購人編號</th>
+                <th>功能</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@order.OrderId</td>
+                    <td>@order.CreateTime.ToString("yyyy/MM/dd HH:mm")</td>
+                    <td>@order.Price</td>
+                    <td>@order.CustomerId</td>
+                    <td><button class="btn btn-outline-danger" @onclick="@(() => Delete(order.OrderId))">Delete</button></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<OrderInfo>? orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        orders = await _orderService.GetOrderListAsync();
+    }
+
+    /// <summary>
+    /// 新增
+    /// </summary>
+    /// <returns></returns>
+    private async Task Add()
+    {
+        Random random = new();
+        OrderInfo orderInfo = new();
+        orderInfo.CreateTime = DateTime.Now;
+        orderInfo.Price = random.Next(1, 500);
+        orderInfo.CustomerId = random.Next(1, 10);
+        orderInfo.IsDeleted = false;
+        var result = await _orderService.AddOrderAsync(orderInfo);
+        // 呼叫函數：狀態已更新
+        if (result)
+        {
+            orders = await _orderService.GetOrderListAsync();
+            //StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// 刪除
+    /// </summary>
+    /// <returns></returns>
+    private async Task Delete(int orderId)
+    {
+        var result = await _orderService.DeleteOrderAsync(orderId);
+        // 呼叫函數：狀態已更新
+        if (result)
+        {
+            orders = await _orderService.GetOrderListAsync();
+            //StateHasChanged();
+        }
+    }
+}
