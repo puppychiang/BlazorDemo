@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // µù¥U¸ê®Æ®w
 builder.Services.AddDbContext<DemoDBContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection"))
+    options.UseSqlite(builder.Configuration.GetConnectionString("SqliteConnection")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking)
 );
 
 // Add services to the container.
